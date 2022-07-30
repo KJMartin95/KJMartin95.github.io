@@ -1,37 +1,214 @@
-## Welcome to GitHub Pages
+<!DOCTYPE html>
 
-You can use the [editor on GitHub](https://github.com/KJMartin95/KJMartin95.github.io/edit/main/index.md) to maintain and preview the content for your website in Markdown files.
+<html lang="en">
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
-### Markdown
+<head>
+    
+    <meta charset="utf-8">
+    <title> Narrative Visualization </title>
+    <script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+    <script src = "https://rawgit.com/susielu/d3-annotation/master/d3-annotation.min.js"></script>
+    
+</head>
+<body>
+      
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+<h1> Covid's Impact on College Enrollment </h1>
+<p> It is evident that the Coronavirus has made an impact on many areas of life. What are its
+effects on the number of students enrolling in college? </p>
 
-```markdown
-Syntax highlighted code block
+<div id="my_dataviz"></div>
 
-# Header 1
-## Header 2
-### Header 3
+  
+<script>
+//confirmation that d3 library works:    
+//d3.select("body").append("p").text("New paragraph!");
 
-- Bulleted
-- List
+var margin = {top: 10, right: 30, bottom: 30, left: 60},
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
 
-1. Numbered
-2. List
 
-**Bold** and _Italic_ and `Code` text
+var svg = d3.select("#my_dataviz")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .attr("id", "first")
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
 
-[Link](url) and ![Image](src)
-```
+var dataset = [
+    [1970, 8580887],
+    [1971, 8948644],
+    [1972, 9214860],
+    [1973, 9602123],
+    [1974, 10223729],
+    [1975, 11184859],
+    [1976, 11012137],
+    [1977, 11285787],
+    [1978, 11260092],
+    [1979, 11569899],
+    [1980, 12096895],
+    [1981, 12371672],
+    [1982, 12425780],
+    [1983, 12464661],
+    [1984, 12241940],
+    [1985, 12247055],
+    [1986, 12503511],
+    [1987, 12766642],
+    [1988, 13055337],
+    [1989, 13538560],
+    [1990, 13818637],
+    [1991, 14358953],
+    [1992, 14487359],
+    [1993, 14304803],
+    [1994, 14278790],
+    [1995, 14261781],
+    [1996, 14367520],
+    [1997, 14502334],
+    [1998, 14506967],
+    [1999, 14849691],
+    [2000, 15312289],
+    [2001, 15927987],
+    [2002, 16611711],
+    [2003, 16911481],
+    [2004, 17272044],
+    [2005, 17487475],
+    [2006, 17754230],
+    [2007, 18258138],
+    [2008, 19081686],
+    [2009, 20313594],
+    [2010, 21019438],
+    [2011, 21010590],
+    [2012, 20644478],
+    [2013, 20376677],
+    [2014, 20209092],
+    [2015, 19988204],
+    [2016, 19846904],
+    [2017, 19778151],
+    [2018, 19651412],
+    [2019, 19630178],
+    [2020, 18991798],
+    [2021, 20327000],
+    [2022, 20031000]   
+];
 
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
+//var svg = d3.select("svg");
+//g = svg.append("g").attr("transform", "translate(250,250)");
 
-### Jekyll Themes
+var xScale = d3.scaleLinear().domain([1970,2010]).range([0,width]);
+svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(xScale));
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/KJMartin95/KJMartin95.github.io/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+var yScale = d3.scaleLinear().domain([0,21000000]).range([height,0]);
+svg.append("g")
+    .call(d3.axisLeft(yScale));
 
-### Support or Contact
+svg.append('g')
+    .selectAll("dot")
+    .data(dataset)
+    .enter()
+    .append("circle")
+      .attr("cx", function (d) { return xScale(d[0]); } )
+      .attr("cy", function (d) { return yScale(d[1]); } )
+      .attr("r", 1.5)
+      .style("fill", "#69b3a2");
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+const annotations = [
+  {
+    note: {
+      label: "College enrollment has been steadily increasing through 2010",
+      title: "Upward trend"
+    },
+    x: 200,
+    y: 50,
+    dy: 100,
+    dx: 100
+  }
+]
+
+const makeAnnotations = d3.annotation()
+  .annotations(annotations)
+d3.select("#first")
+  .append("g")
+  .call(makeAnnotations);
+
+document.getElementById("#my_dataviz").addEventListener("click", myFunction());
+
+const myButton = d3.select("button1");
+myButton.addEventListener("click", function(){
+    d3.select("#my_dataviz").html=""
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .attr("id", "first")
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+        var xScale = d3.scaleLinear().domain([1970,2020]).range([0,width]);
+    svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(xScale));
+
+    var yScale = d3.scaleLinear().domain([0,21000000]).range([height,0]);
+    svg.append("g")
+    .call(d3.axisLeft(yScale));
+
+    svg.append('g')
+    .selectAll("dot")
+    .data(dataset)
+    .enter()
+    .append("circle")
+      .attr("cx", function (d) { return xScale(d[0]); } )
+      .attr("cy", function (d) { return yScale(d[1]); } )
+      .attr("r", 1.5)
+      .style("fill", "#69b3a2");
+    
+});
+console.log(myButton);
+
+function myFunction() {
+    //document.getElementById("my_dataviz")
+    d3.select("div").html=" "
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .attr("id", "first")
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+        var xScale = d3.scaleLinear().domain([1970,2020]).range([0,width]);
+    svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(xScale));
+
+    var yScale = d3.scaleLinear().domain([0,21000000]).range([height,0]);
+    svg.append("g")
+    .call(d3.axisLeft(yScale));
+
+    svg.append('g')
+    .selectAll("dot")
+    .data(dataset)
+    .enter()
+    .append("circle")
+      .attr("cx", function (d) { return xScale(d[0]); } )
+      .attr("cy", function (d) { return yScale(d[1]); } )
+      .attr("r", 1.5)
+      .style("fill", "#69b3a2");
+}
+
+
+</script>
+
+<button id="button1" onclick="myFunction()">
+    Next scene
+</button>
+
+</body>
+</html>   
+
